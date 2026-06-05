@@ -1,0 +1,18 @@
+[build]
+# Tell Railway to build using the Dockerfile in the project root
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Railway injects $PORT automatically; uvicorn reads it via the CMD in the Dockerfile
+startCommand = "uvicorn api.main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/health"
+healthcheckTimeout = 120
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[environments.production.variables]
+# Set ANTHROPIC_API_KEY in the Railway dashboard under Variables, not here.
+# Listing it here as a reminder — Railway will inject it securely at runtime.
+# ANTHROPIC_API_KEY = ""
+PYTHONUNBUFFERED = "1"

@@ -1,0 +1,9 @@
+langgraph
+langchain
+langchain-anthropic
+fastapi
+streamlit
+pdfplumber
+uvicorn
+python-dotenv
+pydantic
