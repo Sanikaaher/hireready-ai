@@ -1,0 +1,40 @@
+services:
+  # ── FastAPI Backend ──────────────────────────────────────────────────────────
+  - name: hireready-api
+    type: web
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    branch: main
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false          # Set this manually in the Render dashboard
+      - key: PORT
+        value: "8000"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: PYTHONDONTWRITEBYTECODE
+        value: "1"
+    healthCheckPath: /health
+    autoDeploy: true
+
+  # ── Streamlit Frontend ───────────────────────────────────────────────────────
+  - name: hireready-ui
+    type: web
+    runtime: docker
+    dockerfilePath: ./Dockerfile.streamlit
+    plan: free
+    region: oregon
+    branch: main
+    envVars:
+      - key: API_URL
+        fromService:
+          name: hireready-api
+          type: web
+          property: hostport
+      - key: PORT
+        value: "8501"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+    autoDeploy: true

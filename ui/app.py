@@ -14,7 +14,12 @@ try:
 except ImportError:
     LOCAL_AVAILABLE = False
 
-API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
+_raw_api_url = os.getenv("API_URL", "http://127.0.0.1:8000")
+# Render's fromService hostport gives "hostname:port" without a scheme — add https://
+if _raw_api_url and not _raw_api_url.startswith("http"):
+    API_URL = f"https://{_raw_api_url}"
+else:
+    API_URL = _raw_api_url
 
 # ── Page config ─────────────────────────────────────────────────────────────
 st.set_page_config(
