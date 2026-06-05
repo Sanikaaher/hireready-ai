@@ -171,19 +171,6 @@ st.markdown("""
 
 # ── Sidebar ──────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("### ⚙️ Configuration")
-
-    api_key = st.text_input(
-        "Anthropic API Key",
-        type="password",
-        value=os.getenv("ANTHROPIC_API_KEY", ""),
-        help="Required for live Claude inference. Leave blank to run on high-fidelity mock data.",
-        placeholder="sk-ant-api...",
-    )
-    if api_key:
-        os.environ["ANTHROPIC_API_KEY"] = api_key
-
-    st.markdown("---")
     st.markdown("### 📄 Inputs")
 
     default_jd = (
@@ -282,7 +269,7 @@ if run_btn:
 
     # ── Render results ──────────────────────────────────────────────────────
     if not result:
-        st.error("Pipeline did not return a result. Check your API key or start the FastAPI backend.")
+        st.error("Pipeline did not return a result. Please try again or contact support if the issue persists.")
         st.stop()
 
     st.toast(f"✅ Analysis complete via {mode}!", icon="🎓")
@@ -418,24 +405,18 @@ else:
         </p>
         <div style="
             display:grid;
-            grid-template-columns: repeat(3,1fr);
+            grid-template-columns: repeat(2,1fr);
             gap:.8rem;
             text-align:left;
         ">
             <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:1rem">
                 <b style="color:#c7d2fe">Step 1</b>
                 <p style="color:rgba(255,255,255,.5);font-size:.85rem;margin:.3rem 0 0">
-                    Upload PDF resume & paste job description
+                    Upload PDF resume &amp; paste job description
                 </p>
             </div>
             <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:1rem">
                 <b style="color:#c7d2fe">Step 2</b>
-                <p style="color:rgba(255,255,255,.5);font-size:.85rem;margin:.3rem 0 0">
-                    Optionally add your Anthropic API key for live Claude inference
-                </p>
-            </div>
-            <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:1rem">
-                <b style="color:#c7d2fe">Step 3</b>
                 <p style="color:rgba(255,255,255,.5);font-size:.85rem;margin:.3rem 0 0">
                     Click Analyse and review all 6 agent outputs + readiness score
                 </p>
