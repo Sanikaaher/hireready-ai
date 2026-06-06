@@ -232,7 +232,7 @@ if run_btn:
                     f"{API_URL}/analyze",
                     data={"job_description": job_desc},
                     files={"file": (uploaded_pdf.name, f, "application/pdf")},
-                    timeout=180,
+                    timeout=600,
                 )
             if resp.status_code == 200:
                 result = resp.json()
