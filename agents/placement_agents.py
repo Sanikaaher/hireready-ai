@@ -1,4 +1,5 @@
 import os
+import time
 import pdfplumber
 from typing import Dict, Any, List, Tuple
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -13,7 +14,7 @@ def get_llm():
         # Returns None to signal fallback to mock data
         return None
     return ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
+        model="gemini-2.0-flash-lite",
         google_api_key=api_key,
         temperature=0.2
     )
@@ -66,6 +67,7 @@ class PlacementAgents:
                 "job_description": job_description,
                 "format_instructions": parser.get_format_instructions()
             })
+            time.sleep(4)
             return result.get("ats_score", 50.0), result.get("skill_gaps", [])
         except Exception as e:
             print(f"Error invoking ATS agent: {e}")
@@ -94,6 +96,7 @@ class PlacementAgents:
             )
             chain = prompt | llm
             response = chain.invoke({"skill_gaps": ", ".join(skill_gaps)})
+            time.sleep(4)
             return response.content
         except Exception as e:
             return f"Error generating study plan: {e}"
@@ -124,6 +127,7 @@ class PlacementAgents:
             )
             chain = prompt | llm
             response = chain.invoke({"resume_text": resume_text, "job_description": job_description})
+            time.sleep(4)
             return response.content
         except Exception as e:
             return f"Error simulating interview preparation: {e}"
@@ -151,6 +155,7 @@ class PlacementAgents:
             )
             chain = prompt | llm
             response = chain.invoke({"job_description": job_description})
+            time.sleep(4)
             return response.content
         except Exception as e:
             return f"Error generating GD tips: {e}"

@@ -1,4 +1,5 @@
 import os
+import time
 from typing import List
 from graph.state import CandidateState
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -9,7 +10,7 @@ def get_llm():
     if not api_key or api_key.startswith("your-"):
         return None
     return ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
+        model="gemini-2.0-flash-lite",
         google_api_key=api_key,
         temperature=0.4
     )
@@ -91,6 +92,7 @@ def study_planner_node(state: CandidateState) -> CandidateState:
             )
             chain = prompt | llm
             response = chain.invoke({"gaps_text": gaps_text})
+            time.sleep(4)
             plan = response.content
         except Exception as e:
             plan = _mock_study_plan(skill_gaps)

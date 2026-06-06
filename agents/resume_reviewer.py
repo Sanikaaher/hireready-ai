@@ -1,4 +1,5 @@
 import os
+import time
 from typing import Dict, Any
 from graph.state import CandidateState
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -9,7 +10,7 @@ def get_llm():
     if not api_key or api_key.startswith("your-"):
         return None
     return ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
+        model="gemini-2.0-flash-lite",
         google_api_key=api_key,
         temperature=0.2
     )
@@ -47,6 +48,7 @@ def resume_reviewer_node(state: CandidateState) -> CandidateState:
             )
             chain = prompt | llm
             response = chain.invoke({"resume_text": resume_text, "job_description": job_description})
+            time.sleep(4)
             feedback = response.content
         except Exception as e:
             feedback = f"Error in Resume Reviewer agent: {str(e)}"
