@@ -1,5 +1,5 @@
 import os
-import time
+from agents.utils import invoke_with_retry
 from graph.state import CandidateState
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -106,8 +106,7 @@ def gd_moderator_node(state: CandidateState) -> CandidateState:
                 "Use section headers, bold text, and tables for readability."
             )
             chain = prompt | llm
-            response = chain.invoke({"job_description": job_description})
-            time.sleep(4)
+            response = invoke_with_retry(chain, {"job_description": job_description})
             feedback = response.content
         except Exception as e:
             feedback = _MOCK_GD

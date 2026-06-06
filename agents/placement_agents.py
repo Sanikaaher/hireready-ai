@@ -1,5 +1,5 @@
 import os
-import time
+from agents.utils import invoke_with_retry
 import pdfplumber
 from typing import Dict, Any, List, Tuple
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -62,12 +62,11 @@ class PlacementAgents:
             )
             
             chain = prompt | llm | parser
-            result = chain.invoke({
+            result = invoke_with_retry(chain, {
                 "resume_text": resume_text,
                 "job_description": job_description,
                 "format_instructions": parser.get_format_instructions()
             })
-            time.sleep(4)
             return result.get("ats_score", 50.0), result.get("skill_gaps", [])
         except Exception as e:
             print(f"Error invoking ATS agent: {e}")
@@ -95,8 +94,7 @@ class PlacementAgents:
                 "Provide concrete actionable resources, daily targets, and expected outcomes in Markdown format."
             )
             chain = prompt | llm
-            response = chain.invoke({"skill_gaps": ", ".join(skill_gaps)})
-            time.sleep(4)
+            response = invoke_with_retry(chain, {"skill_gaps": ", ".join(skill_gaps)})
             return response.content
         except Exception as e:
             return f"Error generating study plan: {e}"
@@ -126,8 +124,7 @@ class PlacementAgents:
                 "Job Description:\n{job_description}"
             )
             chain = prompt | llm
-            response = chain.invoke({"resume_text": resume_text, "job_description": job_description})
-            time.sleep(4)
+            response = invoke_with_retry(chain, {"resume_text": resume_text, "job_description": job_description})
             return response.content
         except Exception as e:
             return f"Error simulating interview preparation: {e}"
@@ -154,8 +151,7 @@ class PlacementAgents:
                 "Job Description:\n{job_description}"
             )
             chain = prompt | llm
-            response = chain.invoke({"job_description": job_description})
-            time.sleep(4)
+            response = invoke_with_retry(chain, {"job_description": job_description})
             return response.content
         except Exception as e:
             return f"Error generating GD tips: {e}"

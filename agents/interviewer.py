@@ -1,5 +1,5 @@
 import os
-import time
+from agents.utils import invoke_with_retry
 from graph.state import CandidateState
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -91,11 +91,10 @@ def interviewer_node(state: CandidateState) -> CandidateState:
                 "Format output in clean, readable Markdown with separators between questions."
             )
             chain = prompt | llm
-            response = chain.invoke({
+            response = invoke_with_retry(chain, {
                 "resume_text": resume_text,
                 "job_description": job_description
             })
-            time.sleep(4)
             feedback = response.content
         except Exception as e:
             feedback = _MOCK_QA

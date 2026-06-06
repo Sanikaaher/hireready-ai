@@ -1,5 +1,5 @@
 import os
-import time
+from agents.utils import invoke_with_retry
 from typing import Dict, Any, List
 from graph.state import CandidateState
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -49,12 +49,11 @@ def skill_gap_analyzer_node(state: CandidateState) -> CandidateState:
             )
             
             chain = prompt | llm | parser
-            result = chain.invoke({
+            result = invoke_with_retry(chain, {
                 "resume_text": resume_text,
                 "job_description": job_description,
                 "format_instructions": parser.get_format_instructions()
             })
-            time.sleep(4)
             score = result.get("ats_score", 50.0)
             gaps = result.get("skill_gaps", [])
         except Exception as e:

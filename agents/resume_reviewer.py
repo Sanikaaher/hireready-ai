@@ -1,5 +1,5 @@
 import os
-import time
+from agents.utils import invoke_with_retry
 from typing import Dict, Any
 from graph.state import CandidateState
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -47,8 +47,7 @@ def resume_reviewer_node(state: CandidateState) -> CandidateState:
                 "Job Description:\n{job_description}"
             )
             chain = prompt | llm
-            response = chain.invoke({"resume_text": resume_text, "job_description": job_description})
-            time.sleep(4)
+            response = invoke_with_retry(chain, {"resume_text": resume_text, "job_description": job_description})
             feedback = response.content
         except Exception as e:
             feedback = f"Error in Resume Reviewer agent: {str(e)}"

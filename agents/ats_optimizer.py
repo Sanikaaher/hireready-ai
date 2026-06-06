@@ -1,5 +1,5 @@
 import os
-import time
+from agents.utils import invoke_with_retry
 from typing import Dict, Any
 from graph.state import CandidateState
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -45,8 +45,7 @@ def ats_optimizer_node(state: CandidateState) -> CandidateState:
                 "Target Job Description:\n{job_description}"
             )
             chain = prompt | llm
-            response = chain.invoke({"resume_text": resume_text, "job_description": job_description})
-            time.sleep(4)
+            response = invoke_with_retry(chain, {"resume_text": resume_text, "job_description": job_description})
             optimized = response.content
         except Exception as e:
             optimized = f"Error in ATS Optimizer agent: {str(e)}"

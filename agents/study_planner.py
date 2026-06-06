@@ -1,5 +1,5 @@
 import os
-import time
+from agents.utils import invoke_with_retry
 from typing import List
 from graph.state import CandidateState
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -91,8 +91,7 @@ def study_planner_node(state: CandidateState) -> CandidateState:
                 "and a final consolidation week at the end. Be specific — avoid generic advice."
             )
             chain = prompt | llm
-            response = chain.invoke({"gaps_text": gaps_text})
-            time.sleep(4)
+            response = invoke_with_retry(chain, {"gaps_text": gaps_text})
             plan = response.content
         except Exception as e:
             plan = _mock_study_plan(skill_gaps)
