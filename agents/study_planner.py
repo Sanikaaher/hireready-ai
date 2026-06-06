@@ -1,25 +1,18 @@
 import os
 from typing import List
 from graph.state import CandidateState
-from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 
 def get_llm():
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key or api_key.startswith("your-"):
         return None
-    try:
-        return ChatAnthropic(
-            model="claude-sonnet-4-5-20251022",
-            anthropic_api_key=api_key,
-            temperature=0.4
-        )
-    except Exception:
-        return ChatAnthropic(
-            model="claude-sonnet-4-5-20251022",
-            anthropic_api_key=api_key,
-            temperature=0.4
-        )
+    return ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash",
+        google_api_key=api_key,
+        temperature=0.4
+    )
 
 def _mock_study_plan(skill_gaps: List[str]) -> str:
     """High-fidelity mock study plan fallback."""

@@ -1,20 +1,20 @@
 import os
 import pdfplumber
 from typing import Dict, Any, List, Tuple
-from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
 
 # Initialize LLM helper
 def get_llm():
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key or api_key.startswith("your-"):
         # Returns None to signal fallback to mock data
         return None
-    return ChatAnthropic(
-        model="claude-3-5-sonnet-latest",
-        anthropic_api_key=api_key,
+    return ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash",
+        google_api_key=api_key,
         temperature=0.2
     )
 

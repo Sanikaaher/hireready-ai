@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="HireReady AI — Placement Evaluation API",
     description=(
-        "Multi-agent LangGraph pipeline powered by Claude (claude-sonnet-4-20250514). "
+        "Multi-agent LangGraph pipeline powered by Gemini (gemini-2.0-flash). "
         "Runs 6 specialised agents in sequence — Resume Review → ATS Optimisation → "
         "Skill Gap Analysis → Study Planning → Mock Interview → GD Simulation — "
         "with a critic node that loops back when readiness < 70 (up to 3 iterations)."

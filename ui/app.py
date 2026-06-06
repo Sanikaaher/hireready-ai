@@ -163,7 +163,7 @@ st.markdown("""
 <div class="hero">
     <div class="hero-title">HireReady <span>AI</span></div>
     <div class="hero-sub">
-        Multi-agent LangGraph pipeline · Claude-powered · 6 specialised agents ·
+        Multi-agent LangGraph pipeline · Gemini-powered · 6 specialised agents ·
         Critic feedback loop · End-to-end placement preparation
     </div>
 </div>
@@ -426,7 +426,7 @@ else:
 
     <div style="text-align:center;margin-top:2rem">
         <p style="color:rgba(255,255,255,.25);font-size:.8rem">
-            Powered by Claude (claude-sonnet-4-20250514) · LangGraph · FastAPI · Streamlit
+            Powered by Gemini (gemini-2.0-flash) · LangGraph · FastAPI · Streamlit
         </p>
     </div>
     """, unsafe_allow_html=True)

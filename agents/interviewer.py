@@ -1,24 +1,17 @@
 import os
 from graph.state import CandidateState
-from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 
 def get_llm():
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key or api_key.startswith("your-"):
         return None
-    try:
-        return ChatAnthropic(
-            model="claude-sonnet-4-5-20251022",
-            anthropic_api_key=api_key,
-            temperature=0.5
-        )
-    except Exception:
-        return ChatAnthropic(
-            model="claude-sonnet-4-5-20251022",
-            anthropic_api_key=api_key,
-            temperature=0.5
-        )
+    return ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash",
+        google_api_key=api_key,
+        temperature=0.5
+    )
 
 _MOCK_QA = """## 🎯 Mock Interview — 5 Tailored Q&As
 
@@ -69,7 +62,7 @@ hallucination handling, and observability with tools like LangSmith or Phoenix.
 def interviewer_node(state: CandidateState) -> CandidateState:
     """
     Generates 5 targeted mock interview Q&As based on the candidate's resume
-    and job description using Claude API.
+    and job description using Gemini API.
     Receives and returns CandidateState.
     """
     print("--- RUNNING INTERVIEWER AGENT NODE ---")

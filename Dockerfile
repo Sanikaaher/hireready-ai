@@ -3,7 +3,7 @@ FROM python:3.11-slim
 
 # Metadata
 LABEL maintainer="HireReady AI"
-LABEL description="Multi-agent LangGraph placement evaluation API (FastAPI + Claude)"
+LABEL description="Multi-agent LangGraph placement evaluation API (FastAPI + Gemini)"
 
 # ── System dependencies ───────────────────────────────────────────────────────
 # gcc/g++ are needed by some pdfplumber/cryptography native extensions

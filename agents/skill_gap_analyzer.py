@@ -1,7 +1,7 @@
 import os
 from typing import Dict, Any, List
 from graph.state import CandidateState
-from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
@@ -12,21 +12,14 @@ class SkillGapSchema(BaseModel):
     skill_gaps: List[str] = Field(description="List of technologies, soft skills, or experience areas required but missing/weak in the resume")
 
 def get_llm():
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key or api_key.startswith("your-"):
         return None
-    try:
-        return ChatAnthropic(
-            model="claude-sonnet-4-5-20251022",
-            anthropic_api_key=api_key,
-            temperature=0.1
-        )
-    except Exception:
-        return ChatAnthropic(
-            model="claude-sonnet-4-5-20251022",
-            anthropic_api_key=api_key,
-            temperature=0.1
-        )
+    return ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash",
+        google_api_key=api_key,
+        temperature=0.1
+    )
 
 def skill_gap_analyzer_node(state: CandidateState) -> CandidateState:
     """

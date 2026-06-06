@@ -1,6 +1,6 @@
 langgraph
 langchain
-langchain-anthropic
+langchain-google-genai
 fastapi
 streamlit
 pdfplumber
