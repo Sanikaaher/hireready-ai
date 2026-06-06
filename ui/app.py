@@ -239,8 +239,8 @@ if run_btn:
                 mode = "FastAPI backend"
             else:
                 st.sidebar.warning(f"Backend error {resp.status_code} — falling back to local pipeline.")
-        except Exception:
-            st.sidebar.info("FastAPI offline — running local in-process pipeline.")
+        except Exception as api_exc:
+            st.sidebar.info(f"FastAPI offline (`{API_URL}`) — running local pipeline.")
 
         # ── Local pipeline fallback ─────────────────────────────────────────
         if result is None and LOCAL_AVAILABLE:
@@ -261,7 +261,8 @@ if run_btn:
                 result = placement_workflow.invoke(initial)
                 mode = "local in-process pipeline"
             except Exception as ex:
-                st.error(f"Local pipeline failed: {ex}")
+                st.error(f"❌ Local pipeline error: {ex}")
+                st.stop()
 
         # Cleanup temp file
         if os.path.exists(tmp_path):
