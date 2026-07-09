@@ -1,6 +1,6 @@
 # HireReady AI — Multi-Agent Placement Preparation System
 
-> **An agentic LangGraph pipeline powered by Anthropic Claude that reviews resumes, closes skill gaps, and prepares candidates end-to-end for technical placement interviews.**
+> **An agentic LangGraph pipeline powered by Google Gemini that reviews resumes, closes skill gaps, and prepares candidates end-to-end for technical placement interviews.**
 
 ---
 
@@ -45,12 +45,12 @@ Each agent receives and returns the full **`CandidateState`** TypedDict, keeping
 
 | Layer | Technology |
 |---|---|
-| **LLM** | Anthropic Claude (`claude-sonnet-4-20250514`) via `langchain-anthropic` |
+| **LLM** | Google Gemini via `langchain-google-genai` |
 | **Orchestration** | [LangGraph](https://github.com/langchain-ai/langgraph) `StateGraph` |
 | **API Backend** | [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/) |
 | **Frontend** | [Streamlit](https://streamlit.io/) |
 | **PDF Parsing** | [pdfplumber](https://github.com/jsvine/pdfplumber) |
-| **Deployment** | [Railway](https://railway.app/) via Docker |
+| **Deployment** | [Render](https://render.com/) via Docker |
 | **Config** | `python-dotenv` + `.env` file |
 
 ---
@@ -81,8 +81,8 @@ HireReady AI/
 ├── ui/
 │   └── app.py                 # Streamlit dashboard
 │
-├── Dockerfile                 # Production container for Railway
-├── railway.toml               # Railway deployment configuration
+├── Dockerfile                 # Production container for Render
+├── render.yaml                # Render deployment configuration
 ├── requirements.txt           # Python dependencies
 └── .env.example               # Environment variable template
 ```
@@ -105,10 +105,10 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edit `.env` and add your Anthropic API key:
+Edit `.env` and add your Google API key:
 
 ```dotenv
-ANTHROPIC_API_KEY=sk-ant-api03-...
+GOOGLE_API_KEY=AIza...
 HOST=127.0.0.1
 PORT=8000
 ```
@@ -209,30 +209,30 @@ curl -X POST http://127.0.0.1:8000/analyze \
 
 ---
 
-## 🚀 Deploy on Railway
+## 🚀 Deploy on Render
 
 ### Prerequisites
-- A [Railway](https://railway.app/) account
+- A [Render](https://render.com/) account
 - The project pushed to a GitHub repository
 
 ### Steps
 
-1. **Create a new Railway project** and connect your GitHub repo.
+1. **Create a new Render project** and connect your GitHub repo.
 
-2. **Set environment variables** in the Railway dashboard under **Variables**:
+2. **Set environment variables** in the Render dashboard under **Environment**:
    ```
-   ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
+   GOOGLE_API_KEY=AIza...
    ```
 
-3. **Railway auto-detects** the `railway.toml` and `Dockerfile` in the project root and builds automatically.
+3. **Render auto-detects** the `render.yaml` and `Dockerfile` in the project root and builds automatically.
 
-4. The **health check** at `/health` is polled by Railway to confirm successful deployment.
+4. The **health check** at `/health` is polled by Render to confirm successful deployment.
 
-5. Once deployed, copy your Railway **public URL** and set it in the Streamlit UI:
+5. Once deployed, copy your Render **public URL** and set it in the Streamlit UI:
    ```dotenv
-   API_URL=https://your-app.railway.app
+   API_URL=https://your-app.onrender.com
    ```
-   Or pass it as an env variable in a separate Streamlit deployment.
+   Or pass it as an env variable in a separate Streamlit service on Render.
 
 ### Build locally with Docker
 
@@ -242,7 +242,7 @@ docker build -t hireready-ai .
 
 # Run container
 docker run -p 8000:8000 \
-  -e ANTHROPIC_API_KEY=sk-ant-api03-... \
+  -e GOOGLE_API_KEY=AIza... \
   hireready-ai
 ```
 
@@ -252,9 +252,9 @@ docker run -p 8000:8000 \
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `ANTHROPIC_API_KEY` | Optional | *(mock mode)* | Anthropic API key for live Claude inference |
+| `GOOGLE_API_KEY` | Optional | *(mock mode)* | Google API key for live Gemini inference |
 | `HOST` | No | `127.0.0.1` | Uvicorn bind host (set to `0.0.0.0` in prod) |
-| `PORT` | No | `8000` | Uvicorn listen port (injected by Railway automatically) |
+| `PORT` | No | `8000` | Uvicorn listen port (injected by Render automatically) |
 | `API_URL` | No | `http://127.0.0.1:8000` | FastAPI base URL used by the Streamlit UI |
 
 ---
