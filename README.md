@@ -45,7 +45,7 @@ Each agent receives and returns the full **`CandidateState`** TypedDict, keeping
 
 | Layer | Technology |
 |---|---|
-| **LLM** | Google Gemini via `langchain-google-genai` |
+| **LLM** | Google Gemini (`gemini-2.0-flash-lite`) via `langchain-google-genai` |
 | **Orchestration** | [LangGraph](https://github.com/langchain-ai/langgraph) `StateGraph` |
 | **API Backend** | [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/) |
 | **Frontend** | [Streamlit](https://streamlit.io/) |
@@ -60,29 +60,33 @@ Each agent receives and returns the full **`CandidateState`** TypedDict, keeping
 ```
 HireReady AI/
 ├── agents/
-│   ├── __init__.py            # Exports all node functions
+│   ├── __init__.py            # Exports all 6 node functions
 │   ├── resume_reviewer.py     # Agent 1 — Resume review & feedback
 │   ├── ats_optimizer.py       # Agent 2 — ATS-optimised rewrite
 │   ├── skill_gap_analyzer.py  # Agent 3 — Skill gap detection + ATS score
 │   ├── study_planner.py       # Agent 4 — Week-by-week study plan
 │   ├── interviewer.py         # Agent 5 — 5 mock interview Q&As
 │   ├── gd_moderator.py        # Agent 6 — GD simulation + evaluation
-│   └── placement_agents.py    # Legacy utility class (PDF extraction etc.)
+│   ├── placement_agents.py    # PlacementAgents utility class + PDF extractor
+│   └── utils.py               # invoke_with_retry() — rate-limit safe LLM caller
 │
 ├── graph/
 │   ├── __init__.py            # Exports CandidateState + placement_workflow
 │   ├── state.py               # CandidateState TypedDict definition
 │   ├── pipeline.py            # Full 6-agent StateGraph with critic loop  ← MAIN
-│   └── workflow.py            # Legacy workflow (superseded by pipeline.py)
+│   ├── nodes.py               # Legacy node functions (used by workflow.py)
+│   └── workflow.py            # Legacy compiled workflow (superseded by pipeline.py)
 │
 ├── api/
 │   └── main.py                # FastAPI app — POST /analyze, GET /health
 │
 ├── ui/
-│   └── app.py                 # Streamlit dashboard
+│   └── app.py                 # Streamlit dashboard (API + local pipeline fallback)
 │
-├── Dockerfile                 # Production container for Render
-├── render.yaml                # Render deployment configuration
+├── Dockerfile                 # FastAPI backend container for Render
+├── Dockerfile.streamlit       # Streamlit frontend container for Render
+├── render.yaml                # Render deployment config (2 services: API + UI)
+├── railway.toml               # Legacy Railway config (kept for reference)
 ├── requirements.txt           # Python dependencies
 └── .env.example               # Environment variable template
 ```
@@ -94,7 +98,7 @@ HireReady AI/
 ### 1. Clone & install dependencies
 
 ```bash
-git clone https://github.com/your-org/hireready-ai.git
+git clone https://github.com/Sanikaaher/hireready-ai.git
 cd hireready-ai
 pip install -r requirements.txt
 ```
@@ -133,6 +137,8 @@ streamlit run ui/app.py
 ```
 
 The dashboard opens at **http://localhost:8501**
+
+> **Dual-mode UI:** The Streamlit app first tries the FastAPI backend at `API_URL`. If the backend is unreachable, it automatically falls back to running the LangGraph pipeline in-process — no extra config needed for local development.
 
 ### 5. Test the pipeline directly (no UI)
 
@@ -213,26 +219,26 @@ curl -X POST http://127.0.0.1:8000/analyze \
 
 ### Prerequisites
 - A [Render](https://render.com/) account
-- The project pushed to a GitHub repository
+- The project pushed to a GitHub repository: [Sanikaaher/hireready-ai](https://github.com/Sanikaaher/hireready-ai)
 
 ### Steps
 
 1. **Create a new Render project** and connect your GitHub repo.
 
-2. **Set environment variables** in the Render dashboard under **Environment**:
+2. **Set environment variables** in the Render dashboard under **Environment** for the API service:
    ```
    GOOGLE_API_KEY=AIza...
    ```
 
-3. **Render auto-detects** the `render.yaml` and `Dockerfile` in the project root and builds automatically.
+3. **Render auto-detects** the `render.yaml` in the project root and builds **two services** automatically:
+   - `hireready-api` — FastAPI backend (`Dockerfile`)
+   - `hireready-ui` — Streamlit frontend (`Dockerfile.streamlit`)
 
-4. The **health check** at `/health` is polled by Render to confirm successful deployment.
+4. The **health check** at `/health` is polled by Render to confirm successful deployment of the API service.
 
-5. Once deployed, copy your Render **public URL** and set it in the Streamlit UI:
-   ```dotenv
-   API_URL=https://your-app.onrender.com
-   ```
-   Or pass it as an env variable in a separate Streamlit service on Render.
+5. The `render.yaml` automatically injects the API service URL into the Streamlit service as `API_URL` — no manual configuration needed.
+
+6. The Streamlit UI automatically prefixes `https://` to the `API_URL` hostport value injected by Render.
 
 ### Build locally with Docker
 
