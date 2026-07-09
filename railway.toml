@@ -12,7 +12,7 @@ restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
 
 [environments.production.variables]
-# Set ANTHROPIC_API_KEY in the Railway dashboard under Variables, not here.
-# Listing it here as a reminder — Railway will inject it securely at runtime.
-# ANTHROPIC_API_KEY = ""
+# Set GOOGLE_API_KEY in the Render dashboard under Environment, not here.
+# Listing it here as a reminder — Render will inject it securely at runtime.
+# GOOGLE_API_KEY = ""
 PYTHONUNBUFFERED = "1"

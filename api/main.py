@@ -49,7 +49,7 @@ app.add_middleware(
 @app.get("/health", tags=["System"])
 def health_check():
     """
-    Lightweight health-check endpoint used by Railway and load balancers.
+    Lightweight health-check endpoint used by Render and load balancers.
     Returns 200 when the API is ready to accept requests.
     """
     return {
